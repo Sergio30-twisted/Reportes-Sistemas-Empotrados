@@ -1,0 +1,65 @@
+#include <Adafruit_GFX.h>
+#include <Adafruit_PCD8544.h>
+#include <DHT.h>
+
+ 
+#define RST 15
+#define CE 2
+#define DC 4
+#define DIN 23
+#define CLK 18
+
+#define DHTPIN 21
+#define DHTTYPE DHT11
+
+Adafruit_PCD8544 display = Adafruit_PCD8544(CLK, DIN, DC, CE, RST);
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+
+  display.begin();
+  display.setContrast(40);
+
+  dht.begin();
+
+  display.clearDisplay();
+  display.setTextColor(BLACK);
+  display.setTextSize(1);
+  display.setCursor(0, 16);
+  display.println("Iniciando...");
+  display.display();
+
+  delay(2000);
+}
+
+void loop() {
+  float temp = dht.readTemperature();
+  float hum  = dht.readHumidity();
+
+  display.clearDisplay();
+  display.setCursor(0, 0);
+
+  if (isnan(temp) || isnan(hum)) {
+    display.println("Error lectura");
+    Serial.println("Error al leer el sensor DHT11");
+  } else {
+
+    display.println("Temp:");
+    display.print(temp, 1);
+    display.println(" C");
+
+    display.println("Hum:");
+    display.print(hum, 0);
+    display.println(" %");
+
+    Serial.print("Temp: ");
+    Serial.print(temp);
+    Serial.print(" C  |  Hum: ");
+    Serial.print(hum);
+    Serial.println(" %");
+  }
+
+  display.display();
+  delay(2000);
+}

@@ -1,0 +1,21 @@
+void setup() {
+  // put your setup code here, to run once:
+
+  Serial.begin(115200);
+  //PIN, FRECUENCIA 5-5000, BITS 8-12
+  ledcAttach(2, 5000, 4);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if (Serial.available()) {
+    String input = Serial.readStringUntil('\n');
+    input.trim();
+    int brillo = input.toInt();
+    if (brillo >= 0 && brillo <= 255) {
+      ledcWrite(2,brillo);
+    } else {
+      Serial.println("Valores fuera del rango");
+    }
+  }
+}
